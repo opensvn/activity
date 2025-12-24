@@ -11,19 +11,23 @@ interface ISiteMetadataResult {
 }
 
 const data: ISiteMetadataResult = {
-  siteTitle: 'Arthur Feng 锻炼记录',
-  siteUrl: 'https://blog.4a1801.life',
-  logo: 'https://pan.4a1801.life:11443/d/public/logo1.jpg',
+  siteTitle: '招财猫的运动记录',
+  siteUrl: 'https://run.gitop.de',
+  logo: 'https://s3.cn-north-1.amazonaws.com.cn/garmin-connect-prod/profile_images/3ca91a3c-5438-45c4-9bdc-9ba84fc6d698-prof.png',
   description: 'Personal site and blog',
   keywords: 'workouts, running, cycling, riding, roadtrip, hiking, swimming',
   navLinks: [
     {
-      name: '📝 Blog',
-      url: 'https://blog.4a1801.life',
+      name: '📝 博客',
+      url: 'https://blog.gitop.de',
     },
     {
-      name: '⭐ Repo',
-      url: 'https://github.com/arthurfsy2/workouts_page_fsy',
+      name: '🙏 感谢yihong',
+      url: 'https://github.com/yihong0618/running_page',
+    },
+    {
+      name: '🙏 感谢ben',
+      url: 'https://github.com/ben-29/workouts_page',
     },
   ],
 };

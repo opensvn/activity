@@ -1,9 +1,8 @@
 // const
-const MAPBOX_TOKEN =
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
   // For security reasons, please avoid using the default public token provided by Mapbox as much as possible.
   // Instead, manually add a new token and apply URL restrictions.
   // (please refer to https://github.com/yihong0618/running_page/issues/643#issuecomment-2042668580)
-  'pk.eyJ1IjoiYmVuLTI5IiwiYSI6ImNrZ3Q4Ym9mMDBqMGYyeXFvODV2dWl6YzQifQ.gSKoWF-fMjhzU67TuDezJQ';
 const MUNICIPALITY_CITIES_ARR = [
   '北京市',
   '上海市',
@@ -54,7 +53,7 @@ const RICH_TITLE = true;
 const IS_CHINESE = true;
 const USE_ANIMATION_FOR_GRID = false;
 const CHINESE_INFO_MESSAGE = (yearLength: number, year: string): string =>
-  `锻炼 ${yearLength} 年了 ` +
+  `运动 ${yearLength} 年了 ` +
   (year === 'Total' ? '' : `，右图为 ${year} 年的活动轨迹`);
 
 const ENGLISH_INFO_MESSAGE = (yearLength: number, year: string): string =>
@@ -64,9 +63,9 @@ const ENGLISH_INFO_MESSAGE = (yearLength: number, year: string): string =>
     : `, the right picture shows the activity trajectory in ${year}`);
 
 const LOCATION_INFO_MESSAGE_FIRST =
-  '我一开始是一个极度讨厌运动的人，后来喜欢上跑步机，接着是路跑，到最近的骑行';
+  '自律给我自由';
 const LOCATION_INFO_MESSAGE_SECOND =
-  '运动这件事，想想就很痛苦，但是完成了的成就感就是会带来多巴胺！';
+  '坚持才能胜利';
 
 const INFO_MESSAGE = IS_CHINESE ? CHINESE_INFO_MESSAGE : ENGLISH_INFO_MESSAGE;
 const FULL_MARATHON_RUN_TITLE = IS_CHINESE
@@ -351,7 +350,7 @@ export const MAP_TILE_STYLE_DARK = 'light-v11';
 // access token. you can apply a new one, it's free.
 
 // stadiamaps: ea116919-7a5d-4def-96e0-490a92e0973f |sign up at https://client.stadiamaps.com/signup/
-export const MAP_TILE_ACCESS_TOKEN = 'ea116919-7a5d-4def-96e0-490a92e0973f';
+export const MAP_TILE_ACCESS_TOKEN = import.meta.env.VITE_MAP_TILE_ACCESS_TOKEN;
 
 // maptiler: Gt5R0jT8tuIYxW6sNrAg | sign up at https://cloud.maptiler.com/auth/widget
 // export const MAP_TILE_ACCESS_TOKEN = 'akuvQTIUaPG5sbtkpwvc'; //maptiler
