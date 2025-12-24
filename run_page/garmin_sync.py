@@ -6,6 +6,7 @@ Copy most code from https://github.com/cyberjunky/python-garminconnect
 import argparse
 import asyncio
 import datetime as dt
+import json
 import logging
 import os
 import sys
@@ -252,6 +253,7 @@ def add_summary_info(file_data, summary_infos, fields=None):
                 "end_time",
                 "moving_time",
                 "elapsed_time",
+                "elevation_gain",
             ]
         for field in fields:
             create_element(
@@ -303,12 +305,16 @@ async def download_garmin_data(
         traceback.print_exc()
 
 
-async def get_activity_id_list(client, start=0):
-    activities = await client.get_activities(start, 100)
+async def get_activity_id_list(client, downloaded_id_set, limit=10, start=0):
+    activities = await client.get_activities(start, limit)
     if len(activities) > 0:
         ids = list(map(lambda a: str(a.get("activityId", "")), activities))
+        id_set = set(ids)
         print("Syncing Activity IDs")
-        return ids + await get_activity_id_list(client, start + 100)
+        if not id_set.intersection(downloaded_id_set):
+            return ids + await get_activity_id_list(client, downloaded_id_set, limit, start + limit)
+        else:
+            return ids
     else:
         return []
 
@@ -343,6 +349,7 @@ def get_garmin_summary_infos(activity_summary, activity_id):
         garmin_summary_infos["end_time"] = end_time.isoformat()
         garmin_summary_infos["moving_time"] = summary_dto.get("movingDuration")
         garmin_summary_infos["elapsed_time"] = summary_dto.get("elapsedDuration")
+        garmin_summary_infos["elevation_gain"] = summary_dto.get("elevationGain")
     except Exception as e:
         print(f"Failed to get activity summary {activity_id}: {str(e)}")
     return garmin_summary_infos
@@ -354,8 +361,9 @@ async def download_new_activities(
     client = Garmin(secret_string, auth_domain, is_only_running)
     # because I don't find a para for after time, so I use garmin-id as filename
     # to find new run to generate
-    activity_ids = await get_activity_id_list(client)
-    to_generate_garmin_ids = list(set(activity_ids) - set(downloaded_ids))
+    downloaded_id_set = set(downloaded_ids)
+    activity_ids = await get_activity_id_list(client, downloaded_id_set)
+    to_generate_garmin_ids = list(set(activity_ids) - downloaded_id_set)
     print(f"{len(to_generate_garmin_ids)} new activities to be downloaded")
 
     to_generate_garmin_id2title = {}
@@ -365,6 +373,17 @@ async def download_new_activities(
             activity_summary = await client.get_activity_summary(id)
             activity_title = activity_summary.get("activityName", "")
             to_generate_garmin_id2title[id] = activity_title
+
+            try:
+                json_dir = "JSON"
+                if not os.path.exists(json_dir):
+                    os.makedirs(json_dir, exist_ok=True)
+                summary_file = os.path.join(json_dir, f"{id}.json")
+                async with aiofiles.open(summary_file, "w", encoding="utf-8") as f:
+                    await f.write(json.dumps(activity_summary, ensure_ascii=False, indent=2))
+            except Exception as e:
+                logger.error(f"Failed to save summary JSON for {id}: {str(e)}")
+
             garmin_summary_infos_dict[id] = get_garmin_summary_infos(
                 activity_summary, id
             )
